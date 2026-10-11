@@ -9,8 +9,10 @@ export default tseslint.config(
   reactHooks.configs['recommended-latest'],
   reactRefresh.configs['vite'],
   {
+    ignores: ['node_modules', 'dist', 'build', 'out', '*.min.js', 'scripts'],
+  },
+  {
     files: ['**/*.{ts,tsx}'],
-    ignores: ['node_modules', 'dist', 'build', 'out', '*.min.js'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'error',
       'react-refresh/only-export-components': [

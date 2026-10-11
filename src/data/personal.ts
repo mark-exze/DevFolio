@@ -3,7 +3,7 @@
  *
  * All information is sourced from the verified CV (08_MRPD-CV.docx).
  * Contact details are public-safe: no phone numbers, no residential
- * address, no student ID, and no character references are exposed.
+ * address, and no student ID are exposed.
  */
 
 export const personal = {
@@ -16,7 +16,6 @@ export const personal = {
     'As an aspiring software developer, I enjoy turning ideas into practical, user-friendly applications. Through hands-on projects and collaborative development, I continue to strengthen my problem-solving skills, explore emerging technologies, and grow as a developer.',
   ],
   email: 'markrolanddelicano@gmail.com',
-  studentEmail: 'a23-1-00212@vsu.edu.ph',
   location: 'Jaro, Leyte, Philippines',
   education: 'Bachelor of Science in Information Technology',
   institution: 'Visayas State University Alangalang',
