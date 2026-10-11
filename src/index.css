@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-navy-950: #080E1D;
+  --color-navy-900: #0D172B;
+  --color-navy-800: #111a33;
+  --color-navy-700: #1B2C48;
+  --color-navy-600: #233056;
+  --color-sky-400: #00C8F8;
+  --color-sky-500: #168BFF;
+  --color-sky-600: #0A3D6B;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-navy-700;
+  }
+  body {
+    @apply bg-navy-950 text-gray-100;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Offset sticky navbar so anchor targets are not hidden behind it. */
+  section {
+    scroll-margin-top: 6rem;
+  }
+}
