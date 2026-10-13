@@ -2,11 +2,13 @@
  * Hero — landing section with headline, intro, and primary actions.
  *
  * Two-column layout: the left column carries the introduction and actions;
- * the right column holds the floating developer code illustration — a
- * tilted, perspective-shifted editor window over four decorative layers
- * (dotted texture, blue gradient circle, right and lower-left backing
- * panels) with a floating `</>` icon overlapping the lower right. All
- * decoration is noninteractive and reduced-motion aware.
+ * the right column holds the floating developer code editor — a straight,
+ * front-facing window over a single decorative tilted backing panel, with
+ * a blue circular decoration behind its upper-left corner, a faint dotted
+ * texture, and a glowing `</>` icon at the lower right. The editor keeps
+ * its compact size and gentle vertical float; no rotation or perspective
+ * is applied to it. All decoration is noninteractive and reduced-motion
+ * aware.
  */
 
 import { personal } from '@/data/personal'
@@ -47,14 +49,14 @@ export function Hero() {
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
-              href="#projects"
+              href="#projects-research"
               className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-colors hover:bg-sky-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950"
             >
               View projects
               <ArrowDown className="h-4 w-4" aria-hidden />
             </a>
             <a
-              href="#research"
+              href="#projects-research"
               className="inline-flex items-center gap-2 rounded-lg border border-navy-600 px-4 py-2.5 text-sm font-semibold text-gray-200 transition-colors hover:border-sky-500/50 hover:bg-navy-800/60 hover:text-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950"
             >
               Explore VeriFaceX
@@ -95,52 +97,43 @@ export function Hero() {
         </div>
 
         <div className="flex min-w-0 items-center justify-center md:py-10">
-          <div className="relative mx-auto w-full max-w-md py-10 md:py-10">
-            {/* Layer D — faint dotted texture behind the composition */}
+          {/* Uniform scale (not per-element resizing) so the editor, circle,
+              and icon shrink together and the composition stays balanced.
+              Applied at lg+ only, where the illustration is widest;
+              mobile/tablet keep full size for code readability. */}
+          <div className="relative mx-auto w-full max-w-md origin-center py-10 md:py-10 lg:scale-[0.88]">
+            {/* Faint dotted texture behind the composition */}
             <div
               aria-hidden
               className="bg-dot-grid pointer-events-none absolute -inset-x-2 -inset-y-2 opacity-40 md:-inset-x-10 md:-inset-y-6"
             />
 
-            {/* Light panel behind the circle, peeking above the editor */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -left-10 -top-10 h-32 w-48 rotate-[-8deg] rounded-[2rem] bg-white/[0.07] md:-left-12 md:-top-14 md:h-40 md:w-60 lg:-left-24 lg:-top-28 lg:h-64 lg:w-96"
-            />
-
-            {/* Layer A — distinct blue circle behind the editor's upper-left,
-                partially obscured by the editor in the foreground */}
+            {/* Blue circle behind the editor's upper-left corner, partially
+                obscured by the editor in the foreground */}
             <div
               aria-hidden
               className="pointer-events-none absolute -left-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br from-sky-400/65 via-sky-500/35 to-blue-700/15 blur-[1px] md:-left-10 md:-top-12 md:h-40 md:w-40 lg:-left-20 lg:-top-20 lg:h-56 lg:w-56"
             />
 
-            {/* Layer B — dark panel extending beyond the editor's right edge */}
+            {/* Tilted backing panel behind the editor. Clockwise rotation
+                with a small right/down offset so its edges stay visible;
+                painted behind the editor and never over the code. */}
             <div
               aria-hidden
-              className="absolute inset-0 translate-x-3 translate-y-2 rotate-[3deg] rounded-2xl border border-sky-500/20 bg-navy-900/50 backdrop-blur-sm md:translate-x-5 md:rotate-[4deg] lg:translate-x-11 lg:rotate-[5deg]"
+              className="absolute inset-0 translate-x-2 translate-y-2 rotate-[5deg] rounded-2xl border border-sky-500/20 bg-navy-900/50 backdrop-blur-sm md:translate-x-4 md:rotate-[6deg] lg:translate-x-8"
             />
 
-            {/* Layer C — dark panel behind the editor's lower-left */}
-            <div
-              aria-hidden
-              className="absolute inset-0 -translate-x-3 translate-y-5 -rotate-[3deg] rounded-2xl border border-sky-500/15 bg-navy-800/40 md:-translate-x-5 md:translate-y-9 md:-rotate-[4deg] lg:-translate-x-9 lg:translate-y-14 lg:-rotate-[5deg]"
-            />
-
-            {/* Main editor — one transform on the composition only; the code
-                text inside is never transformed. Counterclockwise tilt with
-                subtle perspective and gentle float. */}
-            <div className="relative [perspective:1200px]">
-              <div className="md:[transform:rotateY(-9deg)_rotateX(2deg)_rotate(-4deg)]">
-                <div className="motion-safe:animate-float">
-                  <DeveloperCard />
-                </div>
-              </div>
+            {/* Main editor — straight, front-facing window with a gentle
+                vertical float; no rotation or perspective is applied.
+                `relative` keeps it painted above the backing panel even
+                when the float animation is suppressed. */}
+            <div className="relative motion-safe:animate-float">
+              <DeveloperCard />
             </div>
 
-            {/* Floating code icon — overlapping the editor's lower-right
-                corner on desktop; on the narrow mobile/tablet layouts it
-                drops just below the corner so it never covers code text. */}
+            {/* Floating code icon at the editor's lower-right corner. On the
+                narrow mobile layout it sits just below the corner so it
+                never covers code text. */}
             <span
               aria-hidden
               className="absolute -bottom-2 -right-1 grid h-12 w-12 rotate-[10deg] place-items-center rounded-2xl border border-cyan-300/60 bg-gradient-to-br from-sky-500 via-blue-700 to-navy-900 shadow-[0_12px_28px_-6px_rgba(14,165,233,0.7)] ring-1 ring-inset ring-cyan-200/25 motion-safe:animate-float-icon md:-bottom-8 md:-right-4 md:h-16 md:w-16 lg:-right-6 lg:h-24 lg:w-24"

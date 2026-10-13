@@ -62,8 +62,7 @@ export const personal = {
   nav: [
     { label: 'About', href: '#about' },
     { label: 'Skills', href: '#skills' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Research', href: '#research' },
+    { label: 'Projects & Research', href: '#projects-research' },
     { label: 'Education', href: '#education' },
     { label: 'Devlog', href: '#devlog' },
     { label: 'Contact', href: '#contact' },

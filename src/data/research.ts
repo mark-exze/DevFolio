@@ -3,12 +3,39 @@
  *
  * Publication status is stated explicitly: VeriFaceX is ongoing research;
  * the Campus Facilities Booking MIS is an unpublished research presentation.
+ *
+ * Optional fields (`thumbnail`, `images`, `documents`) exist so real
+ * figures and supporting documents can be attached later without
+ * changing the components. Sections backed by an empty or absent field
+ * are hidden, so never invent values for them — leave them unset until
+ * a real asset exists in `public/` (images) or a real URL exists
+ * (documents).
  */
+
+import type { WorkId } from './works'
 
 export type ResearchStatus = 'ongoing' | 'unpublished'
 
+export interface ResearchImage {
+  /** Public path such as `/images/research/verifacex-figure-1.png`. */
+  src: string
+  alt: string
+  caption?: string
+}
+
+export interface ResearchDocument {
+  label: string
+  href: string
+}
+
 export interface ResearchProject {
   id: string
+  /**
+   * Stable identity shared with the matching project entry (when the
+   * work is also a software project). Used to merge both records into a
+   * single card in the Projects & Research section.
+   */
+  workId: WorkId
   name: string
   role: string
   teamSize: number
@@ -21,11 +48,18 @@ export interface ResearchProject {
   recognition?: string
   ethics?: string
   evaluation?: string
+  /** Optional card thumbnail; omitted when no real asset exists. */
+  thumbnail?: string
+  /** Optional figures shown as a gallery in the details modal. */
+  images?: ResearchImage[]
+  /** Optional supporting documents with real URLs/files. */
+  documents?: ResearchDocument[]
 }
 
 export const researchProjects: ResearchProject[] = [
   {
     id: 'research-1',
+    workId: 'verifacex',
     name: 'VeriFaceX',
     role: 'Researcher',
     teamSize: 4,
@@ -59,6 +93,7 @@ export const researchProjects: ResearchProject[] = [
   },
   {
     id: 'research-2',
+    workId: 'vsua-facilities-booking-mis',
     name: 'VSUA Campus Facilities Booking Management Information System',
     role: 'Researcher',
     teamSize: 1,
