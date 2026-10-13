@@ -106,4 +106,15 @@ describe('personal data', () => {
       expect(item.href.trim().length).toBeGreaterThan(0)
     }
   })
+
+  it('has an extended biography with non-empty paragraphs', () => {
+    expect(personal.bioExtended.length).toBeGreaterThan(0)
+    for (const paragraph of personal.bioExtended) {
+      expect(paragraph.trim().length).toBeGreaterThan(0)
+    }
+  })
+
+  it('exposes a default profile photo', () => {
+    expect(personal.profilePhoto).toMatch(/\.(jpg|jpeg|png|webp)$/)
+  })
 })

@@ -11,6 +11,50 @@
   --color-sky-400: #00C8F8;
   --color-sky-500: #168BFF;
   --color-sky-600: #0A3D6B;
+
+  /* Subtle fade/slide reveal for the expanded biography. Applied via
+     motion-safe:animate-bio-reveal so reduced-motion users get none. */
+  --animate-bio-reveal: bio-reveal 0.3s ease-out both;
+
+  /* Subtle vertical float for the Hero code editor. Applied via
+     motion-safe:animate-float so reduced-motion users get none. */
+  --animate-float: float 6s ease-in-out infinite;
+
+  /* Independent, slower float for the Hero floating code icon. Only the
+     vertical movement is animated; the icon's static rotation lives in
+     the element's rotate property so it persists without motion. */
+  --animate-float-icon: float-icon 5s ease-in-out infinite;
+
+  @keyframes bio-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.625rem);
+    }
+  }
+
+  @keyframes float-icon {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.5rem);
+    }
+  }
 }
 
 @layer base {
@@ -29,6 +73,26 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  /* Faint dotted texture used behind the Hero code-editor composition.
+     The radial mask fades the dots out toward the edges. */
+  .bg-dot-grid {
+    background-image: radial-gradient(
+      circle,
+      rgba(125, 211, 252, 0.18) 1px,
+      transparent 1px
+    );
+    background-size: 18px 18px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 75% 75% at 50% 50%,
+      black 40%,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse 75% 75% at 50% 50%,
+      black 40%,
+      transparent 78%
+    );
   }
   /* Offset sticky navbar so anchor targets are not hidden behind it. */
   section {
