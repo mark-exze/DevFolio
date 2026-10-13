@@ -4,7 +4,16 @@
  * All entries are sourced from the verified CV (08_MRPD-CV.docx) and the
  * VeriFaceX manuscript. No fictional projects or placeholder repositories
  * are included.
+ *
+ * Optional fields (`thumbnail`, `images`, `documents`) exist so real
+ * screenshots and supporting documents can be attached later without
+ * changing the components. Sections backed by an empty or absent field
+ * are hidden, so never invent values for them — leave them unset until
+ * a real asset exists in `public/` (images) or a real URL exists
+ * (documents).
  */
+
+import type { WorkId } from './works'
 
 export interface ProjectLink {
   label: string
@@ -12,8 +21,26 @@ export interface ProjectLink {
   kind: 'repo' | 'demo' | 'article' | 'paper'
 }
 
+export interface ProjectImage {
+  /** Public path such as `/images/projects/verifacex-1.png`. */
+  src: string
+  alt: string
+  caption?: string
+}
+
+export interface ProjectDocument {
+  label: string
+  href: string
+}
+
 export interface Project {
   id: string
+  /**
+   * Stable identity shared with the matching research entry (when the
+   * work is also research). Used to merge both records into a single
+   * card in the Projects & Research section.
+   */
+  workId: WorkId
   name: string
   description: string
   longDescription?: string
@@ -22,11 +49,18 @@ export interface Project {
   featured: boolean
   status: 'completed' | 'in-progress' | 'archived'
   year: number
+  /** Optional card thumbnail; omitted when no real asset exists. */
+  thumbnail?: string
+  /** Optional screenshots shown as a gallery in the details modal. */
+  images?: ProjectImage[]
+  /** Optional supporting documents with real URLs/files. */
+  documents?: ProjectDocument[]
 }
 
 export const projects: Project[] = [
   {
     id: 'project-1',
+    workId: 'verifacex',
     name: 'VeriFaceX',
     description:
       'An intelligent multi-layered attendance and entry tracking system for VSUA that combines barcode verification, facial recognition, and occupancy monitoring to reduce proxy attendance.',
@@ -56,6 +90,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-2',
+    workId: 'vsua-facilities-booking-mis',
     name: 'VSUA Campus Facilities Booking MIS',
     description:
       'A booking management information system for campus facilities using a heuristic scheduling algorithm.',
@@ -69,6 +104,7 @@ export const projects: Project[] = [
   },
   {
     id: 'project-3',
+    workId: 'devfolio',
     name: 'DevFolio',
     description:
       'A production-ready personal developer portfolio built with React, TypeScript, Vite, Tailwind CSS v4, and Lucide React.',

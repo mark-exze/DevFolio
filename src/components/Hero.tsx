@@ -2,20 +2,25 @@
  * Hero — landing section with headline, intro, and primary actions.
  *
  * Two-column layout: the left column carries the introduction and actions;
- * the right column holds the developer-themed code card, vertically
- * centered against the introduction. No profile photograph or decorative
- * elements are rendered here.
+ * the right column holds the floating developer code editor — a straight,
+ * front-facing window over a single decorative tilted backing panel, with
+ * a blue circular decoration behind its upper-left corner, a faint dotted
+ * texture, and a glowing `</>` icon at the lower right. The editor keeps
+ * its compact size and gentle vertical float; no rotation or perspective
+ * is applied to it. All decoration is noninteractive and reduced-motion
+ * aware.
  */
 
 import { personal } from '@/data/personal'
 import { cn } from '@/utils'
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react'
+import { DeveloperCard } from './DeveloperCard'
 
 export function Hero() {
   return (
     <section
       id="hero"
-      className="relative mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-28"
+      className="relative mx-auto w-full max-w-6xl overflow-x-clip px-4 py-16 sm:px-6 sm:py-28"
       aria-labelledby="hero-heading"
     >
       <div className="grid items-center gap-12 md:grid-cols-2">
@@ -44,14 +49,14 @@ export function Hero() {
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
-              href="#projects"
+              href="#projects-research"
               className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-colors hover:bg-sky-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950"
             >
               View projects
               <ArrowDown className="h-4 w-4" aria-hidden />
             </a>
             <a
-              href="#research"
+              href="#projects-research"
               className="inline-flex items-center gap-2 rounded-lg border border-navy-600 px-4 py-2.5 text-sm font-semibold text-gray-200 transition-colors hover:border-sky-500/50 hover:bg-navy-800/60 hover:text-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950"
             >
               Explore VeriFaceX
@@ -91,51 +96,52 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center">
-          <div className="w-full max-w-md rounded-2xl border border-navy-700 bg-navy-900/60 p-6 shadow-2xl shadow-black/30 backdrop-blur">
-            <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-500/15 text-sky-400">
-                {'<'}
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-white">
-                  {personal.name}
-                </p>
-                <p className="text-xs text-gray-400">{personal.role}</p>
-              </div>
-              <span className="ml-auto h-2 w-2 rounded-full bg-emerald-400" />
+        <div className="flex min-w-0 items-center justify-center md:py-10">
+          {/* Uniform scale (not per-element resizing) so the editor, circle,
+              and icon shrink together and the composition stays balanced.
+              Applied at lg+ only, where the illustration is widest;
+              mobile/tablet keep full size for code readability. */}
+          <div className="relative mx-auto w-full max-w-md origin-center py-10 md:py-10 lg:scale-[0.88]">
+            {/* Faint dotted texture behind the composition */}
+            <div
+              aria-hidden
+              className="bg-dot-grid pointer-events-none absolute -inset-x-2 -inset-y-2 opacity-40 md:-inset-x-10 md:-inset-y-6"
+            />
+
+            {/* Blue circle behind the editor's upper-left corner, partially
+                obscured by the editor in the foreground */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -left-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br from-sky-400/65 via-sky-500/35 to-blue-700/15 blur-[1px] md:-left-10 md:-top-12 md:h-40 md:w-40 lg:-left-20 lg:-top-20 lg:h-56 lg:w-56"
+            />
+
+            {/* Tilted backing panel behind the editor. Clockwise rotation
+                with a small right/down offset so its edges stay visible;
+                painted behind the editor and never over the code. */}
+            <div
+              aria-hidden
+              className="absolute inset-0 translate-x-2 translate-y-2 rotate-[5deg] rounded-2xl border border-sky-500/20 bg-navy-900/50 backdrop-blur-sm md:translate-x-4 md:rotate-[6deg] lg:translate-x-8"
+            />
+
+            {/* Main editor — straight, front-facing window with a gentle
+                vertical float; no rotation or perspective is applied.
+                `relative` keeps it painted above the backing panel even
+                when the float animation is suppressed. */}
+            <div className="relative motion-safe:animate-float">
+              <DeveloperCard />
             </div>
 
-            <div className="mt-5 space-y-2 font-mono text-sm">
-              <p>
-                <span className="text-sky-400">const</span>{' '}
-                <span className="text-amber-300">portfolio</span> = {'{'}
-              </p>
-              <p className="pl-4">
-                <span className="text-sky-400">name</span>:{' '}
-                <span className="text-emerald-300">'{personal.name}'</span>,
-              </p>
-              <p className="pl-4">
-                <span className="text-sky-400">role</span>:{' '}
-                <span className="text-emerald-300">'{personal.role}'</span>,
-              </p>
-              <p className="pl-4">
-                <span className="text-sky-400">stack</span>: [
-                <span className="text-emerald-300">'React'</span>,{' '}
-                <span className="text-emerald-300">'TypeScript'</span>,{' '}
-                <span className="text-emerald-300">'Vite'</span>],
-              </p>
-              <p>{'}'}</p>
-            </div>
-
-            <div className="mt-5 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-sky-400" />
-              <span className="h-2 w-2 rounded-full bg-sky-400/70" />
-              <span className="h-2 w-2 rounded-full bg-sky-400/40" />
-              <span className="ml-2 text-xs text-gray-400">
-                {personal.location}
+            {/* Floating code icon at the editor's lower-right corner. On the
+                narrow mobile layout it sits just below the corner so it
+                never covers code text. */}
+            <span
+              aria-hidden
+              className="absolute -bottom-2 -right-1 grid h-12 w-12 rotate-[10deg] place-items-center rounded-2xl border border-cyan-300/60 bg-gradient-to-br from-sky-500 via-blue-700 to-navy-900 shadow-[0_12px_28px_-6px_rgba(14,165,233,0.7)] ring-1 ring-inset ring-cyan-200/25 motion-safe:animate-float-icon md:-bottom-8 md:-right-4 md:h-16 md:w-16 lg:-right-6 lg:h-24 lg:w-24"
+            >
+              <span className="font-mono text-base font-bold text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.9)] md:text-xl lg:text-3xl">
+                &lt;/&gt;
               </span>
-            </div>
+            </span>
           </div>
         </div>
       </div>

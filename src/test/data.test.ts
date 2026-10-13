@@ -3,10 +3,26 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { projects } from '@/data/projects'
+import { researchProjects } from '@/data/research'
+import { workIds } from '@/data/works'
 import { skillCategories } from '@/data/skills'
 import { devlogEntries } from '@/data/devlog'
 import { personal } from '@/data/personal'
+
+/** Vitest runs from the project root, where `public/` lives. */
+const publicDir = resolve(process.cwd(), 'public')
+
+/** Optional image references must point at real files in public/. */
+function expectRealAsset(src: string) {
+  expect(src.startsWith('/')).toBe(true)
+  expect(
+    existsSync(`${publicDir}${src.replace(/^\//, '')}`),
+    `missing asset: ${src}`,
+  ).toBe(true)
+}
 
 describe('projects data', () => {
   it('has at least one project', () => {
@@ -41,6 +57,89 @@ describe('projects data', () => {
     for (const p of projects) {
       expect(typeof p.year).toBe('number')
     }
+  })
+
+  it('optional project images reference real assets (none invented)', () => {
+    for (const p of projects) {
+      for (const image of p.images ?? []) {
+        expect(image.alt.trim().length).toBeGreaterThan(0)
+        expectRealAsset(image.src)
+      }
+    }
+  })
+
+  it('optional project documents use absolute links with labels', () => {
+    for (const p of projects) {
+      for (const doc of p.documents ?? []) {
+        expect(doc.label.trim().length).toBeGreaterThan(0)
+        expect(doc.href).toMatch(/^(https?:\/\/|\.?\/)/)
+      }
+    }
+  })
+})
+
+describe('research data', () => {
+  it('has at least one entry with a non-empty summary and highlights', () => {
+    expect(researchProjects.length).toBeGreaterThan(0)
+    for (const r of researchProjects) {
+      expect(r.name.trim().length).toBeGreaterThan(0)
+      expect(r.summary.trim().length).toBeGreaterThan(0)
+      expect(r.highlights.length).toBeGreaterThan(0)
+      expect(r.stack.length).toBeGreaterThan(0)
+      expect(['ongoing', 'unpublished']).toContain(r.status)
+    }
+  })
+
+  it('optional research images reference real assets (none invented)', () => {
+    for (const r of researchProjects) {
+      for (const image of r.images ?? []) {
+        expect(image.alt.trim().length).toBeGreaterThan(0)
+        expectRealAsset(image.src)
+      }
+    }
+  })
+
+  it('optional research documents use absolute links with labels', () => {
+    for (const r of researchProjects) {
+      for (const doc of r.documents ?? []) {
+        expect(doc.label.trim().length).toBeGreaterThan(0)
+        expect(doc.href).toMatch(/^(https?:\/\/|\.?\/)/)
+      }
+    }
+  })
+})
+
+describe('work identity (projects + research deduplication)', () => {
+  it('every project and research entry carries a registry workId', () => {
+    for (const p of projects) expect(workIds).toContain(p.workId)
+    for (const r of researchProjects) expect(workIds).toContain(r.workId)
+  })
+
+  it('workIds are unique within each data file', () => {
+    const projectIds = projects.map((p) => p.workId)
+    const researchIds = researchProjects.map((r) => r.workId)
+    expect(new Set(projectIds).size).toBe(projectIds.length)
+    expect(new Set(researchIds).size).toBe(researchIds.length)
+  })
+
+  it('represents a small set of unique works across both files', () => {
+    const ids = new Set([
+      ...projects.map((p) => p.workId),
+      ...researchProjects.map((r) => r.workId),
+    ])
+    // Fewer unique works than records means the two files overlap, which
+    // the unified section is expected to deduplicate by workId.
+    expect(ids.size).toBeLessThan(projects.length + researchProjects.length)
+    expect(ids.size).toBe(3)
+  })
+
+  it('gives works that exist in both files a shared identity', () => {
+    const researchIds = new Set(researchProjects.map((r) => r.workId))
+    const shared = projects.filter((p) => researchIds.has(p.workId))
+    expect(shared.map((p) => p.workId)).toEqual([
+      'verifacex',
+      'vsua-facilities-booking-mis',
+    ])
   })
 })
 
@@ -105,5 +204,16 @@ describe('personal data', () => {
       expect(item.label.trim().length).toBeGreaterThan(0)
       expect(item.href.trim().length).toBeGreaterThan(0)
     }
+  })
+
+  it('has an extended biography with non-empty paragraphs', () => {
+    expect(personal.bioExtended.length).toBeGreaterThan(0)
+    for (const paragraph of personal.bioExtended) {
+      expect(paragraph.trim().length).toBeGreaterThan(0)
+    }
+  })
+
+  it('exposes a default profile photo', () => {
+    expect(personal.profilePhoto).toMatch(/\.(jpg|jpeg|png|webp)$/)
   })
 })
